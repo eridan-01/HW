@@ -1,3 +1,9 @@
+import csv
+from pathlib import Path
+PATH = Path(__file__).parent.resolve().absolute()
+
+
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -43,3 +49,35 @@ class Item:
         else:
             self.__name = new_name[:10]
 
+    @classmethod
+    def instantiate_from_csv(cls):
+        cls.all = []
+        encoding = [
+            'utf-8',
+            'cp500',
+            'utf-16',
+            'GBK',
+            'windows-1251',
+            'ASCII',
+            'US-ASCII',
+            'Big5'
+        ]
+
+        correct_encoding = ''
+
+        for enc in encoding:
+            try:
+                f = open(PATH / "items.csv", encoding=enc).read()
+            except (UnicodeDecodeError, LookupError):
+                pass
+            else:
+                correct_encoding = enc
+                break
+        with open(PATH / "items.csv", encoding=correct_encoding) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                cls(**row)
+
+    @staticmethod
+    def string_to_number(number):
+        return int(float(number))
