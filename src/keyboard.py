@@ -20,4 +20,3 @@ class Keyboard(Item, MixinLang):
 
     def __init__(self, name, price, quantity):
         super().__init__(name, price, quantity)
-        self.language = 'EN'
