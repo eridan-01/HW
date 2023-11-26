@@ -1,5 +1,6 @@
 import csv
 from pathlib import Path
+
 PATH = Path(__file__).parent.resolve().absolute()
 
 
@@ -82,11 +83,24 @@ class Item:
             else:
                 correct_encoding = enc
                 break
-        with open(PATH / "items.csv", encoding=correct_encoding) as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                cls(**row)
+        try:
+            with open(PATH / "items.csv", encoding=correct_encoding) as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    cls(**row)
+        except KeyError:
+            raise InstantiateCSVError
+        except FileNotFoundError:
+            return f"Отсутствует файл items.csv"
 
     @staticmethod
     def string_to_number(number):
         return int(float(number))
+
+
+class InstantiateCSVError(Exception):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'Файл items.csv поврежден'
